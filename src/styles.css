@@ -42,6 +42,12 @@ button { border: 0; border-radius: .55rem; font-weight: 750; }
 .cell input { width: 100%; height: 100%; border: 0; outline: 0; background: transparent; color: inherit; text-align: center; font-weight: 700; }
 .cell input:focus { box-shadow: inset 0 0 0 3px #7ca47d; background: #f3faef; }
 .coordinates { margin-top: .5rem; color: #8a9189; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: .72rem; }
+.preset-details { max-width: 52rem; margin-top: 1rem; border-top: 1px solid #e3ded4; padding-top: .8rem; }
+.preset-details summary { cursor: pointer; color: #466249; font-size: .85rem; font-weight: 750; }
+.preset-list { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: .7rem; }
+.preset-link { display: grid; gap: .15rem; min-width: 12rem; border: 1px solid #c8d2c5; border-radius: .55rem; background: #f4f8f1; color: #38523d; padding: .65rem .75rem; text-decoration: none; }
+.preset-link:hover { border-color: #789a7c; background: #e6f1e3; }
+.preset-link span { color: #778177; font-size: .75rem; }
 .text-entry { max-width: 52rem; margin: 1.25rem 0 1rem; padding: 1rem; border: 1px solid #e3ded4; border-radius: .75rem; background: #f7f5ef; }
 .text-entry-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: .65rem; }
 .text-entry-heading div { display: grid; gap: .15rem; }

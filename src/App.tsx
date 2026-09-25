@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import {
   createChebyshevGrid,
   createInputGrid,
+  createManhattanGrid,
   difference,
   directions,
   gridToText,
@@ -14,6 +15,58 @@ import {
 type Stage = PositionedGrid & { direction?: Direction };
 
 const sampleGrid = createChebyshevGrid(7);
+
+const direction = (dx: Direction['dx'], dy: Direction['dy']) =>
+  directions.find((item) => item.dx === dx && item.dy === dy)!;
+
+const right = direction(1, 0);
+const down = direction(0, 1);
+
+type Preset = {
+  name: string;
+  description: string;
+  inputGrid: string[][];
+  sequence: Direction[];
+};
+
+const presets: Preset[] = [
+  {
+    name: 'チェビシェフ距離',
+    description: '中心からのチェビシェフ距離',
+    inputGrid: createChebyshevGrid(7),
+    sequence: [right, down, direction(1, 1), direction(-1, 1)],
+  },
+  {
+    name: 'マンハッタン距離（正方形）',
+    description: '正方形全体に書いた距離',
+    inputGrid: createManhattanGrid(7),
+    sequence: [right, right, down, down],
+  },
+  {
+    name: 'マンハッタン距離（距離3）',
+    description: '距離3までを書いた7×7の配列',
+    inputGrid: createManhattanGrid(7, 3),
+    sequence: [right, down, direction(1, 1), direction(-1, 1)],
+  },
+  {
+    name: '1次元0次いもす',
+    description: '定数関数',
+    inputGrid: [['0', '0', '1', '1', '1', '1', '1', '1', '1', '0', '0']],
+    sequence: [right],
+  },
+  {
+    name: '1次元1次いもす',
+    description: '一次関数 x',
+    inputGrid: [['0', '0', '0', '1', '2', '3', '4', '5', '6', '0', '0']],
+    sequence: [right, right],
+  },
+  {
+    name: '1次元2次いもす',
+    description: '二次関数 x²',
+    inputGrid: [['0', '0', '0', '1', '4', '9', '16', '25', '36', '0', '0']],
+    sequence: [right, right, right],
+  },
+];
 
 const formatNumber = (value: number) =>
   Number.isInteger(value) ? String(value) : value.toLocaleString('en-US', { maximumFractionDigits: 4 });
@@ -70,6 +123,16 @@ const updateUrl = (inputGrid: string[][], sequence: Direction[]) => {
   }
 
   window.history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`);
+};
+
+const presetHref = (preset: Preset) => {
+  const params = new URLSearchParams();
+  const normalizedGrid = parseGrid(preset.inputGrid).values;
+  params.set('grid', normalizedGrid.map((row) => row.join(',')).join(';'));
+  if (preset.sequence.length > 0) {
+    params.set('directions', preset.sequence.map(({ dx, dy }) => `${dx},${dy}`).join(';'));
+  }
+  return `?${params.toString()}`;
 };
 
 function GridView({ grid, editable, onChange }: {
@@ -283,6 +346,17 @@ export default function App() {
           grid={stages[0]}
           onChange={updateCell}
         />
+        <details className="preset-details">
+          <summary>プリセット</summary>
+          <div className="preset-list">
+            {presets.map((preset) => (
+              <a className="preset-link" href={presetHref(preset)} key={preset.name}>
+                <strong>{preset.name}</strong>
+                <span>{preset.description}</span>
+              </a>
+            ))}
+          </div>
+        </details>
       </section>
 
       <section className="panel direction-panel" aria-labelledby="direction-title">

@@ -94,3 +94,13 @@ export const createChebyshevGrid = (size: number): string[][] => {
     Array.from({ length: size }, (_, column) => String(Math.max(Math.abs(row - center), Math.abs(column - center)))),
   );
 };
+
+export const createManhattanGrid = (size: number, maxDistance = Number.POSITIVE_INFINITY): string[][] => {
+  const center = Math.floor(size / 2);
+  return Array.from({ length: size }, (_, row) =>
+    Array.from({ length: size }, (_, column) => {
+      const distance = Math.abs(row - center) + Math.abs(column - center);
+      return String(distance <= maxDistance ? distance : 0);
+    }),
+  );
+};
