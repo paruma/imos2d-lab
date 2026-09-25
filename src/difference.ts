@@ -112,3 +112,12 @@ export const createMultiplicationGrid = (size: number): string[][] =>
 
 export const createConstantGrid = (size: number, value: number): string[][] =>
   Array.from({ length: size }, () => Array.from({ length: size }, () => String(value)));
+
+export const createRotatedSquareGrid = (size: number): string[][] => {
+  const center = Math.floor(size / 2);
+  return Array.from({ length: size }, (_, row) =>
+    Array.from({ length: size }, (_, column) =>
+      String(Math.abs(row - center) + Math.abs(column - center) <= center ? 1 : 0),
+    ),
+  );
+};

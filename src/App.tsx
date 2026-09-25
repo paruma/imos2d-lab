@@ -5,6 +5,7 @@ import {
   createInputGrid,
   createManhattanGrid,
   createMultiplicationGrid,
+  createRotatedSquareGrid,
   difference,
   directions,
   gridToText,
@@ -49,6 +50,12 @@ const presets: Preset[] = [
     description: '距離3までを書いた7×7の配列',
     inputGrid: createManhattanGrid(7, 3),
     sequence: [right, down, direction(1, 1), direction(-1, 1)],
+  },
+  {
+    name: '45度回転した正方形',
+    description: '7×7のダイヤモンド形',
+    inputGrid: createRotatedSquareGrid(7),
+    sequence: [direction(1, 1), direction(1, -1)],
   },
   {
     name: '2次元0次いもす',
