@@ -291,7 +291,7 @@ export default function App() {
             <p className="section-kicker">NEXT DIFFERENCE</p>
             <h2 id="direction-title">次の差分方向</h2>
           </div>
-          <span className="formula">A[r + dy, c + dx] − A[r, c]</span>
+          <span className="formula">A[r, c] − A[r − dy, c − dx]</span>
         </div>
         <p className="hint">方向を押すと、現在の配列に差分を1回適用します。配列外は0です。</p>
         <DirectionPicker disabled={false} onSelect={applyDirection} />

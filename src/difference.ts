@@ -35,8 +35,8 @@ const valueAt = (grid: PositionedGrid, row: number, column: number) =>
 export const difference = (grid: PositionedGrid, direction: Direction): PositionedGrid => {
   const height = grid.values.length;
   const width = grid.values[0]?.length ?? 0;
-  const rowOrigin = grid.rowOrigin + Math.min(0, -direction.dy);
-  const columnOrigin = grid.columnOrigin + Math.min(0, -direction.dx);
+  const rowOrigin = grid.rowOrigin + Math.min(0, direction.dy);
+  const columnOrigin = grid.columnOrigin + Math.min(0, direction.dx);
   const nextHeight = height + Math.abs(direction.dy);
   const nextWidth = width + Math.abs(direction.dx);
 
@@ -44,7 +44,7 @@ export const difference = (grid: PositionedGrid, direction: Direction): Position
     const row = rowOrigin + rowIndex;
     return Array.from({ length: nextWidth }, (_, columnIndex) => {
       const column = columnOrigin + columnIndex;
-      return valueAt(grid, row + direction.dy, column + direction.dx) - valueAt(grid, row, column);
+      return valueAt(grid, row, column) - valueAt(grid, row - direction.dy, column - direction.dx);
     });
   });
 
