@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   createChebyshevGrid,
   createInputGrid,
@@ -17,6 +17,57 @@ const sampleGrid = createChebyshevGrid(7);
 
 const formatNumber = (value: number) =>
   Number.isInteger(value) ? String(value) : value.toLocaleString('en-US', { maximumFractionDigits: 4 });
+
+type UrlState = {
+  inputGrid: string[][] | null;
+  sequence: Direction[];
+};
+
+const parseUrlGrid = (value: string): string[][] | null => {
+  const result = parseTextGrid(value.replaceAll(';', '\n').replaceAll(',', ' '));
+  return result.values;
+};
+
+const parseUrlDirections = (value: string): Direction[] | null => {
+  if (value === '') return [];
+
+  const parsed = value.split(';').map((item) => {
+    const [dxText, dyText] = item.split(',');
+    const dx = Number(dxText);
+    const dy = Number(dyText);
+    return directions.find((direction) => direction.dx === dx && direction.dy === dy) ?? null;
+  });
+  return parsed.every((direction) => direction !== null)
+    ? parsed as Direction[]
+    : null;
+};
+
+const readUrlState = (): UrlState => {
+  if (typeof window === 'undefined') return { inputGrid: null, sequence: [] };
+
+  const params = new URLSearchParams(window.location.search);
+  const gridText = params.get('grid');
+  const directionsText = params.get('directions');
+  const inputGrid = gridText === null ? null : parseUrlGrid(gridText);
+  const sequence = directionsText === null ? [] : parseUrlDirections(directionsText);
+
+  return {
+    inputGrid,
+    sequence: sequence ?? [],
+  };
+};
+
+const updateUrl = (inputGrid: string[][], sequence: Direction[]) => {
+  const params = new URLSearchParams();
+  const normalizedGrid = parseGrid(inputGrid).values;
+  params.set('grid', normalizedGrid.map((row) => row.join(',')).join(';'));
+  if (sequence.length > 0) {
+    params.set('directions', sequence.map(({ dx, dy }) => `${dx},${dy}`).join(';'));
+  }
+
+  const url = `${window.location.pathname}?${params.toString()}${window.location.hash}`;
+  window.history.replaceState(null, '', url);
+};
 
 function GridView({ grid, editable, onChange }: {
   grid: PositionedGrid;
@@ -90,13 +141,19 @@ function DirectionPicker({ onSelect, disabled }: {
 }
 
 export default function App() {
-  const [rowCount, setRowCount] = useState('7');
-  const [columnCount, setColumnCount] = useState('7');
-  const [inputGrid, setInputGrid] = useState<string[][]>(sampleGrid);
-  const [textInput, setTextInput] = useState(() => gridToText(sampleGrid));
+  const [urlState] = useState(readUrlState);
+  const initialGrid = urlState.inputGrid ?? sampleGrid;
+  const [rowCount, setRowCount] = useState(String(initialGrid.length));
+  const [columnCount, setColumnCount] = useState(String(initialGrid[0].length));
+  const [inputGrid, setInputGrid] = useState<string[][]>(initialGrid);
+  const [textInput, setTextInput] = useState(() => gridToText(initialGrid));
   const [textError, setTextError] = useState<string | null>(null);
-  const [sequence, setSequence] = useState<Direction[]>([]);
+  const [sequence, setSequence] = useState<Direction[]>(urlState.sequence);
   const [copiedStage, setCopiedStage] = useState<string | null>(null);
+
+  useEffect(() => {
+    updateUrl(inputGrid, sequence);
+  }, [inputGrid, sequence]);
 
   const stages = useMemo<Stage[]>(() => {
     const result: Stage[] = [{ ...parseGrid(inputGrid) }];
