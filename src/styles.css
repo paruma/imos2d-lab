@@ -1,0 +1,79 @@
+:root {
+  color: #26322c;
+  background: #f4f1ea;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-synthesis: none;
+  line-height: 1.5;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 1024px; }
+button, input { font: inherit; }
+button { cursor: pointer; }
+
+.app-shell { width: min(100% - 4rem, 108rem); margin: 0 auto; padding: 4.5rem 0 6rem; }
+.hero { max-width: 52rem; margin-bottom: 2.75rem; }
+.eyebrow, .section-kicker { margin: 0; color: #5e7666; font-size: .74rem; font-weight: 800; letter-spacing: .16em; }
+h1 { margin: .25rem 0 .8rem; color: #1c2821; font-family: Georgia, serif; font-size: clamp(3rem, 7vw, 6.6rem); font-weight: 500; letter-spacing: -.06em; line-height: .95; }
+h2, h3, p { margin-top: 0; }
+h2 { margin-bottom: 0; font-size: 1.25rem; letter-spacing: -.02em; }
+h3 { display: inline; margin: 0; font-size: 1rem; }
+.lead { max-width: 40rem; margin-bottom: 0; color: #66736a; font-size: 1.05rem; line-height: 1.8; }
+
+.panel, .stage-card { border: 1px solid #d9d4c9; border-radius: 1.1rem; background: #fbfaf7; box-shadow: 0 .5rem 2rem rgb(63 57 44 / 5%); }
+.panel { padding: 1.5rem; margin-bottom: 1.25rem; }
+.section-heading { display: flex; align-items: start; justify-content: space-between; gap: 1rem; margin-bottom: 1.25rem; }
+.direction-chip { border-radius: 999px; background: #e6efe5; color: #466249; font-size: .78rem; font-weight: 750; padding: .35rem .7rem; white-space: nowrap; }
+.hint { color: #778177; font-size: .88rem; }
+.size-controls { display: flex; align-items: end; flex-wrap: wrap; gap: .75rem; margin-bottom: .75rem; }
+.size-controls label { display: grid; gap: .25rem; color: #5c685e; font-size: .77rem; font-weight: 750; }
+.size-controls input { width: 5.5rem; border: 1px solid #cfc9bc; border-radius: .5rem; background: white; padding: .55rem .65rem; color: #26322c; }
+button { border: 0; border-radius: .55rem; font-weight: 750; }
+.secondary-button { border: 1px solid #b6c5b5; background: #e6efe5; color: #315238; padding: .6rem .8rem; }
+.secondary-button:hover { background: #d8e8d8; }
+.secondary-button:disabled { cursor: not-allowed; opacity: .45; }
+.text-button { padding: .25rem .45rem; background: transparent; color: #66816a; text-decoration: underline; }
+.text-button:hover { color: #315238; }
+
+.grid-scroll { max-width: 100%; overflow: auto; padding-bottom: .25rem; }
+.grid { display: grid; width: max-content; gap: 1px; border: 1px solid #bdc7bc; background: #bdc7bc; }
+.cell { display: grid; width: 1.75rem; height: 1.75rem; place-items: center; background: #fffdfa; color: #39463d; font-size: .78rem; font-variant-numeric: tabular-nums; }
+.cell-nonzero { background: #dfeedd; color: #254c2d; }
+.cell input { width: 100%; height: 100%; border: 0; outline: 0; background: transparent; color: inherit; text-align: center; font-weight: 700; }
+.cell input:focus { box-shadow: inset 0 0 0 3px #7ca47d; background: #f3faef; }
+.coordinates { margin-top: .5rem; color: #8a9189; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: .72rem; }
+.text-entry { max-width: 52rem; margin: 1.25rem 0 1rem; padding: 1rem; border: 1px solid #e3ded4; border-radius: .75rem; background: #f7f5ef; }
+.text-entry-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: .65rem; }
+.text-entry-heading div { display: grid; gap: .15rem; }
+.text-entry-heading strong { font-size: .9rem; }
+.text-entry-heading span { color: #778177; font-size: .78rem; }
+.text-input { display: block; width: 100%; min-height: 7rem; resize: vertical; border: 1px solid #cfc9bc; border-radius: .5rem; outline: 0; background: #fffdfa; color: #26322c; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: .9rem; line-height: 1.55; padding: .7rem; }
+.text-input:focus { border-color: #7ca47d; box-shadow: 0 0 0 3px rgb(124 164 125 / 18%); }
+.text-input.has-error { border-color: #c47e70; }
+.text-status { min-height: 1.2rem; margin-top: .4rem; color: #778177; font-size: .76rem; }
+.text-status.error { color: #a65345; }
+
+.formula { border-radius: .45rem; background: #f0ece3; color: #675f50; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: .78rem; padding: .5rem .7rem; white-space: nowrap; }
+.direction-picker { display: grid; grid-template-columns: repeat(3, minmax(7rem, 9rem)); grid-template-rows: repeat(3, auto); gap: .45rem; width: fit-content; }
+.direction-button { display: grid; grid-template-columns: 1fr; align-items: center; border: 1px solid #c8d2c5; background: #f4f8f1; color: #38523d; padding: .55rem .65rem; text-align: left; }
+.direction-button:hover { border-color: #789a7c; background: #e6f1e3; }
+.direction-button small { color: #839084; font-size: .68rem; font-weight: 500; }
+.sequence-block { margin-top: 1rem; }
+.sequence-line { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; color: #778177; font-size: .78rem; }
+.sequence-item { border-radius: .4rem; background: #f0ece3; color: #5e685e; padding: .3rem .5rem; }
+.sequence-controls { margin-top: .35rem; }
+
+.stages-section { margin-top: 2.5rem; }
+.stages-heading { align-items: center; }
+.stage-list { display: flex; flex-wrap: wrap; align-items: start; gap: 1.25rem; }
+.stage-card { width: fit-content; max-width: 100%; min-width: 0; padding: 1rem; }
+.stage-card-heading { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin-bottom: .8rem; }
+.stage-index { display: inline-block; margin-right: .5rem; color: #8d9a8d; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: .75rem; }
+.copy-actions { display: flex; align-items: center; justify-content: end; gap: .2rem; margin-top: .5rem; color: #9a9e96; font-size: .7rem; }
+.copy-button { border: 0; border-radius: .3rem; background: transparent; color: #7c927e; font-size: .7rem; padding: .2rem .3rem; }
+.copy-button:hover { background: #edf3e9; color: #466249; }
+
+@media (max-width: 70rem) {
+  body { min-width: 0; }
+  .app-shell { width: min(100% - 2rem, 62rem); padding-top: 2.5rem; }
+}
