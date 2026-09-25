@@ -32,7 +32,9 @@ const parseUrlDirections = (value: string): Direction[] | null => {
   if (value === '') return [];
 
   const parsed = value.split(';').map((item) => {
-    const [dxText, dyText] = item.split(',');
+    const parts = item.split(',');
+    if (parts.length !== 2 || parts.some((part) => part === '')) return null;
+    const [dxText, dyText] = parts;
     const dx = Number(dxText);
     const dy = Number(dyText);
     return directions.find((direction) => direction.dx === dx && direction.dy === dy) ?? null;
@@ -58,15 +60,16 @@ const readUrlState = (): UrlState => {
 };
 
 const updateUrl = (inputGrid: string[][], sequence: Direction[]) => {
-  const params = new URLSearchParams();
+  const url = new URL(window.location.href);
   const normalizedGrid = parseGrid(inputGrid).values;
-  params.set('grid', normalizedGrid.map((row) => row.join(',')).join(';'));
+  url.searchParams.set('grid', normalizedGrid.map((row) => row.join(',')).join(';'));
   if (sequence.length > 0) {
-    params.set('directions', sequence.map(({ dx, dy }) => `${dx},${dy}`).join(';'));
+    url.searchParams.set('directions', sequence.map(({ dx, dy }) => `${dx},${dy}`).join(';'));
+  } else {
+    url.searchParams.delete('directions');
   }
 
-  const url = `${window.location.pathname}?${params.toString()}${window.location.hash}`;
-  window.history.replaceState(null, '', url);
+  window.history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`);
 };
 
 function GridView({ grid, editable, onChange }: {
