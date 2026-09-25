@@ -104,3 +104,11 @@ export const createManhattanGrid = (size: number, maxDistance = Number.POSITIVE_
     }),
   );
 };
+
+export const createMultiplicationGrid = (size: number): string[][] =>
+  Array.from({ length: size }, (_, row) =>
+    Array.from({ length: size }, (_, column) => String((row + 1) * (column + 1))),
+  );
+
+export const createConstantGrid = (size: number, value: number): string[][] =>
+  Array.from({ length: size }, () => Array.from({ length: size }, () => String(value)));

@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
   createChebyshevGrid,
+  createConstantGrid,
   createInputGrid,
   createManhattanGrid,
+  createMultiplicationGrid,
   difference,
   directions,
   gridToText,
@@ -47,6 +49,18 @@ const presets: Preset[] = [
     description: '距離3までを書いた7×7の配列',
     inputGrid: createManhattanGrid(7, 3),
     sequence: [right, down, direction(1, 1), direction(-1, 1)],
+  },
+  {
+    name: '2次元0次いもす',
+    description: '7×7の定数配列',
+    inputGrid: createConstantGrid(7, 1),
+    sequence: [right, down],
+  },
+  {
+    name: '九九',
+    description: '1から9までの掛け算表',
+    inputGrid: createMultiplicationGrid(9),
+    sequence: [right, right, down, down],
   },
   {
     name: '1次元0次いもす',
