@@ -278,6 +278,7 @@ export default function App() {
   const [textError, setTextError] = useState<string | null>(null);
   const [sequence, setSequence] = useState<Direction[]>(urlState.sequence);
   const [copiedStage, setCopiedStage] = useState<string | null>(null);
+  const [copyActionsVisible, setCopyActionsVisible] = useState(true);
 
   useEffect(() => {
     updateUrl(inputGrid, sequence);
@@ -464,6 +465,13 @@ export default function App() {
             <p className="section-kicker">EXPERIMENT TRAIL</p>
             <h2 id="stages-title">差分の履歴</h2>
           </div>
+          <button
+            className="text-button"
+            onClick={() => setCopyActionsVisible((visible) => !visible)}
+            type="button"
+          >
+            {copyActionsVisible ? 'コピー操作を隠す' : 'コピー操作を表示'}
+          </button>
         </div>
         <div className="stage-list">
           {stages.map((stage, index) => (
@@ -478,23 +486,25 @@ export default function App() {
                 )}
               </div>
               <GridView grid={stage} />
-              <div className="copy-actions">
-                <span>コピー:</span>
-                <button
-                  className="copy-button"
-                  onClick={() => copyStage(stage, index, ' ')}
-                  type="button"
-                >
-                  {copiedStage === `${index}:space` ? 'コピー済み' : '空白区切り'}
-                </button>
-                <button
-                  className="copy-button"
-                  onClick={() => copyStage(stage, index, '\t')}
-                  type="button"
-                >
-                  {copiedStage === `${index}:tab` ? 'コピー済み' : 'タブ区切り'}
-                </button>
-              </div>
+              {copyActionsVisible && (
+                <div className="copy-actions">
+                  <span>コピー:</span>
+                  <button
+                    className="copy-button"
+                    onClick={() => copyStage(stage, index, ' ')}
+                    type="button"
+                  >
+                    {copiedStage === `${index}:space` ? 'コピー済み' : '空白区切り'}
+                  </button>
+                  <button
+                    className="copy-button"
+                    onClick={() => copyStage(stage, index, '\t')}
+                    type="button"
+                  >
+                    {copiedStage === `${index}:tab` ? 'コピー済み' : 'タブ区切り'}
+                  </button>
+                </div>
+              )}
             </article>
           ))}
         </div>
