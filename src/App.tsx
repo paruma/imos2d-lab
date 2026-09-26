@@ -347,7 +347,6 @@ export default function App() {
     setInputGrid(nextGrid);
     setTextInput(gridToText(nextGrid));
     setTextError(null);
-    setSequence([]);
     return true;
   };
 
@@ -364,7 +363,6 @@ export default function App() {
     setTextInput(gridToText(result.values));
     setRowCount(String(result.values.length));
     setColumnCount(String(result.values[0].length));
-    setSequence([]);
   };
 
   const applyDirection = (direction: Direction) => setSequence((current) => [...current, direction]);
