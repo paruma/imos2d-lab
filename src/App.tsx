@@ -195,10 +195,11 @@ const presetHref = (preset: Preset) => {
   return `?${params.toString()}`;
 };
 
-function GridView({ grid, editable, editableValues, onChange }: {
+function GridView({ grid, editable, editableValues, negativeValuesEmphasized, onChange }: {
   grid: PositionedGrid;
   editable?: boolean;
   editableValues?: string[][];
+  negativeValuesEmphasized?: boolean;
   onChange?: (row: number, column: number, value: string) => boolean;
 }) {
   const width = grid.values[0]?.length ?? 0;
@@ -233,12 +234,13 @@ function GridView({ grid, editable, editableValues, onChange }: {
             const absoluteColumn = grid.columnOrigin + columnIndex;
             const key = `${absoluteRow}:${absoluteColumn}`;
             const isNonZero = value !== 0;
+            const isNegative = value < 0;
             const editableValue = editableValues?.[rowIndex]?.[columnIndex];
             const displayValue = editableValue ?? formatNumber(value);
 
             return (
               <div
-                className={`cell${isNonZero ? ' cell-nonzero' : ' cell-zero'}`}
+                className={`cell${isNonZero ? ' cell-nonzero' : ' cell-zero'}${negativeValuesEmphasized && isNegative ? ' cell-negative' : ''}`}
                 key={key}
                 style={{ fontSize: cellFontSize(displayValue) }}
               >
@@ -301,6 +303,7 @@ export default function App() {
   const [copiedStage, setCopiedStage] = useState<string | null>(null);
   const pendingScrollY = useRef<number | null>(null);
   const [copyActionsVisible, setCopyActionsVisible] = useState(true);
+  const [negativeValuesEmphasized, setNegativeValuesEmphasized] = useState(true);
 
   useEffect(() => {
     updateUrl(inputGrid, sequence);
@@ -449,6 +452,7 @@ export default function App() {
           editable
           grid={stages[0]}
           editableValues={inputGrid}
+          negativeValuesEmphasized={negativeValuesEmphasized}
           onChange={updateCell}
         />
         <details className="preset-details">
@@ -494,16 +498,27 @@ export default function App() {
       <section className="stages-section" aria-labelledby="stages-title">
         <div className="section-heading stages-heading">
           <div>
-            <p className="section-kicker">EXPERIMENT TRAIL</p>
+            <p className="section-kicker">DIFFERENCE HISTORY</p>
             <h2 id="stages-title">差分の履歴</h2>
           </div>
-          <button
-            className="text-button"
-            onClick={() => setCopyActionsVisible((visible) => !visible)}
-            type="button"
-          >
-            {copyActionsVisible ? 'コピー操作を隠す' : 'コピー操作を表示'}
-          </button>
+          <div className="display-controls">
+            <label className="switch-control">
+              <input
+                checked={copyActionsVisible}
+                onChange={(event) => setCopyActionsVisible(event.target.checked)}
+                type="checkbox"
+              />
+              <span>コピー操作を表示</span>
+            </label>
+            <label className="switch-control">
+              <input
+                checked={negativeValuesEmphasized}
+                onChange={(event) => setNegativeValuesEmphasized(event.target.checked)}
+                type="checkbox"
+              />
+              <span>負の数を強調</span>
+            </label>
+          </div>
         </div>
         <div className="stage-list">
           {stages.map((stage, index) => (
@@ -517,7 +532,7 @@ export default function App() {
                   <span className="direction-chip">{stage.direction.label} ({stage.direction.dx}, {stage.direction.dy})</span>
                 )}
               </div>
-              <GridView grid={stage} />
+              <GridView grid={stage} negativeValuesEmphasized={negativeValuesEmphasized} />
               {copyActionsVisible && (
                 <div className="copy-actions">
                   <span>コピー:</span>

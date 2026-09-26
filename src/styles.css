@@ -45,6 +45,7 @@ button { border: 0; border-radius: .55rem; font-weight: 750; }
 .cell { display: grid; width: 1.75rem; height: 1.75rem; place-items: center; background: #fffdfa; color: #39463d; font-size: .95rem; font-weight: 700; font-variant-numeric: tabular-nums; }
 .cell-zero { color: #d4d5d0; }
 .cell-nonzero { background: #dfeedd; color: #254c2d; }
+.cell-negative { background: #f4e7e4; }
 .cell input { width: 100%; height: 100%; border: 0; outline: 0; background: transparent; color: inherit; text-align: center; font-weight: inherit; }
 .cell input:focus { box-shadow: inset 0 0 0 3px #7ca47d; background: #f3faef; }
 .coordinates { margin-top: .5rem; color: #8a9189; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: .72rem; }
@@ -83,6 +84,13 @@ button { border: 0; border-radius: .55rem; font-weight: 750; }
 .copy-actions { display: flex; align-items: center; justify-content: end; gap: .2rem; margin-top: .5rem; color: #9a9e96; font-size: .7rem; }
 .copy-button { border: 0; border-radius: .3rem; background: transparent; color: #7c927e; font-size: .7rem; padding: .2rem .3rem; }
 .copy-button:hover { background: #edf3e9; color: #466249; }
+.display-controls { display: flex; align-items: center; justify-content: end; flex-wrap: wrap; gap: .75rem; }
+.switch-control { display: flex; align-items: center; gap: .3rem; color: #778177; font-size: .7rem; white-space: nowrap; }
+.switch-control input { appearance: none; width: 2rem; height: 1.1rem; margin: 0; border-radius: 999px; background: #cbd2ca; cursor: pointer; position: relative; transition: background .15s ease; }
+.switch-control input::after { position: absolute; top: .15rem; left: .15rem; width: .8rem; height: .8rem; border-radius: 50%; background: #fffdfa; content: ''; transition: transform .15s ease; }
+.switch-control input:checked { background: #789a7c; }
+.switch-control input:checked::after { transform: translateX(.9rem); }
+.switch-control input:focus-visible { outline: 2px solid #7ca47d; outline-offset: 2px; }
 
 @media (max-width: 70rem) {
   body { min-width: 0; }
