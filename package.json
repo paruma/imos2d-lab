@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build"
+    "build": "tsc --noEmit && vite build",
+    "test": "node --experimental-strip-types tests/run.mjs"
   },
   "dependencies": {
     "react": "19.3.0",

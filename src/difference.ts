@@ -12,6 +12,8 @@ export type PositionedGrid = {
   columnOrigin: number;
 };
 
+export type Stage = PositionedGrid & { direction?: Direction };
+
 export const directions: Direction[] = [
   { dx: -1, dy: -1, label: '左上' },
   { dx: 0, dy: -1, label: '上' },
@@ -59,6 +61,14 @@ export const parseGrid = (values: string[][]): PositionedGrid => ({
   rowOrigin: 0,
   columnOrigin: 0,
 });
+
+export const calculateStages = (inputGrid: string[][], sequence: Direction[]): Stage[] => {
+  const stages: Stage[] = [parseGrid(inputGrid)];
+  for (const direction of sequence) {
+    stages.push({ ...difference(stages[stages.length - 1], direction), direction });
+  }
+  return stages;
+};
 
 export type TextGridResult =
   | { values: string[][]; error: null }
