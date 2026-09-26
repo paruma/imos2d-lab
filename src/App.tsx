@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import {
   createChebyshevGrid,
   createConstantGrid,
@@ -95,7 +95,7 @@ const formatNumber = (value: number) =>
 
 const cellFontSize = (text: string) => {
   if (text.length <= 3) return undefined;
-  return `${Math.max(0.45, Math.min(0.85, 3.2 / text.length))}rem`;
+  return `${Math.max(0.5, Math.min(0.95, 3.6 / text.length))}rem`;
 };
 
 type UrlState = {
@@ -238,7 +238,7 @@ function GridView({ grid, editable, editableValues, onChange }: {
 
             return (
               <div
-                className={`cell${isNonZero ? ' cell-nonzero' : ''}`}
+                className={`cell${isNonZero ? ' cell-nonzero' : ' cell-zero'}`}
                 key={key}
                 style={{ fontSize: cellFontSize(displayValue) }}
               >
@@ -299,11 +299,19 @@ export default function App() {
   const [textError, setTextError] = useState<string | null>(null);
   const [sequence, setSequence] = useState<Direction[]>(urlState.sequence);
   const [copiedStage, setCopiedStage] = useState<string | null>(null);
+  const pendingScrollY = useRef<number | null>(null);
   const [copyActionsVisible, setCopyActionsVisible] = useState(true);
 
   useEffect(() => {
     updateUrl(inputGrid, sequence);
   }, [inputGrid, sequence]);
+
+  useLayoutEffect(() => {
+    if (pendingScrollY.current === null) return;
+    // 差分履歴の削除でページの高さが変わっても、連打中の操作位置を保つ。
+    window.scrollTo({ top: pendingScrollY.current, behavior: 'auto' });
+    pendingScrollY.current = null;
+  }, [sequence]);
 
   const stages = useMemo<Stage[]>(() => {
     const result: Stage[] = [{ ...parseGrid(inputGrid) }];
@@ -358,7 +366,10 @@ export default function App() {
 
   const applyDirection = (direction: Direction) => setSequence((current) => [...current, direction]);
 
-  const clearStages = () => setSequence((current) => current.slice(0, -1));
+  const clearStages = () => {
+    pendingScrollY.current = window.scrollY;
+    setSequence((current) => current.slice(0, -1));
+  };
 
   const copyStage = async (stage: PositionedGrid, stageIndex: number, delimiter: ' ' | '\t') => {
     const text = stage.values.map((row) => row.map(formatNumber).join(delimiter)).join('\n');
