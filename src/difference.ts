@@ -118,6 +118,22 @@ export const createChebyshevGrid = (size: number): string[][] => {
   );
 };
 
+export const createPyramidGrid = (size: number): string[][] =>
+  Array.from({ length: size }, (_, row) =>
+    Array.from({ length: size }, (_, column) =>
+      String(1 + Math.min(row, column, size - 1 - row, size - 1 - column)),
+    ),
+  );
+
+export const createRotatedPyramidGrid = (size: number): string[][] => {
+  const center = Math.floor(size / 2);
+  return Array.from({ length: size }, (_, row) =>
+    Array.from({ length: size }, (_, column) =>
+      String(Math.max(0, center + 1 - Math.abs(row - center) - Math.abs(column - center))),
+    ),
+  );
+};
+
 export const createManhattanGrid = (size: number, maxDistance = Number.POSITIVE_INFINITY): string[][] => {
   const center = Math.floor(size / 2);
   return Array.from({ length: size }, (_, row) =>

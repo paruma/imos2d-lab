@@ -125,7 +125,7 @@ export default function InputSection({ initialGrid, inputGrid, negativeValuesEmp
           {presets.map((preset) => (
             <a className="preset-link" href={presetHref(preset.inputGrid, preset.sequence)} key={preset.name}>
               <strong>{preset.name}</strong>
-              <span>{preset.description}</span>
+              {preset.description && <span>{preset.description}</span>}
             </a>
           ))}
         </div>

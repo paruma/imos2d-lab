@@ -3,14 +3,16 @@ import {
   createConstantGrid,
   createManhattanGrid,
   createMultiplicationGrid,
+  createPyramidGrid,
+  createRotatedPyramidGrid,
   createRotatedSquareGrid,
   directions,
   type Direction,
-} from './difference';
+} from './difference.ts';
 
 export type Preset = {
   name: string;
-  description: string;
+  description?: string;
   inputGrid: string[][];
   sequence: Direction[];
 };
@@ -30,25 +32,37 @@ export const presets: Preset[] = [
   },
   {
     name: 'マンハッタン距離（正方形）',
-    description: '正方形全体に書いた距離',
+    description: '中心からのマンハッタン距離',
     inputGrid: createManhattanGrid(7),
     sequence: [right, right, down, down],
   },
   {
     name: 'マンハッタン距離（距離3）',
-    description: '距離3までを書いた7×7の配列',
+    description: '距離3までを書いた配列',
     inputGrid: createManhattanGrid(7, 3),
     sequence: [right, down, direction(1, 1), direction(-1, 1)],
   },
   {
+    name: 'ピラミッド（正方形）',
+    description: '中心に近いほど値が大きい',
+    inputGrid: createPyramidGrid(7),
+    sequence: [right, down, direction(1, 1), direction(-1, 1)],
+  },
+  {
+    name: 'ピラミッド（ひし形）',
+    description: '中心に近いほど値が大きい',
+    inputGrid: createRotatedPyramidGrid(7),
+    sequence: [right, down, direction(1, 1), direction(1, -1)],
+  },
+  {
     name: '45度回転した正方形',
-    description: '7×7のダイヤモンド形',
+    description: 'ひし形の定数配列',
     inputGrid: createRotatedSquareGrid(7),
     sequence: [direction(1, 1), direction(1, -1)],
   },
   {
     name: '2次元0次いもす',
-    description: '7×7の定数配列',
+    description: '定数配列',
     inputGrid: createConstantGrid(7, 1),
     sequence: [right, down],
   },
@@ -66,13 +80,13 @@ export const presets: Preset[] = [
   },
   {
     name: '1次元1次いもす',
-    description: '一次関数 x',
+    description: '1次関数 x',
     inputGrid: [['0', '0', '0', '1', '2', '3', '4', '5', '6', '0', '0']],
     sequence: [right, right],
   },
   {
     name: '1次元2次いもす',
-    description: '二次関数 x²',
+    description: '2次関数 x²',
     inputGrid: [['0', '0', '0', '1', '4', '9', '16', '25', '36', '0', '0']],
     sequence: [right, right, right],
   },
