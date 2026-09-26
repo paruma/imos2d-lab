@@ -200,46 +200,60 @@ function GridView({ grid, editable, editableValues, onChange }: {
 
   return (
     <div className="grid-scroll" role="region" aria-label="配列">
-      <div
-        className="grid"
-        style={{ gridTemplateColumns: `repeat(${width}, 1.75rem)` }}
-      >
-        {grid.values.map((row, rowIndex) => row.map((value, columnIndex) => {
-          const absoluteRow = grid.rowOrigin + rowIndex;
-          const absoluteColumn = grid.columnOrigin + columnIndex;
-          const key = `${absoluteRow}:${absoluteColumn}`;
-          const isNonZero = value !== 0;
-          const editableValue = editableValues?.[rowIndex]?.[columnIndex];
-
-          return (
-            <div
-              className={`cell${isNonZero ? ' cell-nonzero' : ''}`}
-              key={key}
-              title={`(${absoluteRow}, ${absoluteColumn})`}
-            >
-              {editable ? (
-                <input
-                  aria-label={`行${absoluteRow} 列${absoluteColumn}`}
-                  inputMode="decimal"
-                  onBeforeInput={(event) => preventInvalidInsertion(event, isNumberInput)}
-                  value={editableValue ?? String(value)}
-                  onChange={(event) => {
-                    const previousValue = editableValue ?? String(value);
-                    const accepted = onChange?.(rowIndex, columnIndex, event.target.value) ?? true;
-                    if (!accepted) restoreRejectedInput(event.currentTarget, previousValue);
-                  }}
-                />
-              ) : (
-                <span>{formatNumber(value)}</span>
-              )}
+      <div className="grid-with-index">
+        <div className="grid-index-corner" aria-hidden="true" />
+        <div
+          className="column-indexes"
+          style={{ gridTemplateColumns: `repeat(${width}, 1.75rem)` }}
+        >
+          {Array.from({ length: width }, (_, columnIndex) => (
+            <div className="grid-index" aria-hidden="true" key={`column-index-${columnIndex}`}>
+              {grid.columnOrigin + columnIndex}
             </div>
-          );
-        }))}
-      </div>
-      <div className="coordinates">
-        行の範囲: {grid.rowOrigin} 〜 {grid.rowOrigin + grid.values.length - 1}
-        <span aria-hidden="true"> · </span>
-        列の範囲: {grid.columnOrigin} 〜 {grid.columnOrigin + width - 1}
+          ))}
+        </div>
+        <div
+          className="row-indexes"
+          style={{ gridTemplateRows: `repeat(${grid.values.length}, 1.75rem)` }}
+        >
+          {grid.values.map((row, rowIndex) => (
+            <div className="grid-index" aria-hidden="true" key={`row-index-${rowIndex}`}>
+              {grid.rowOrigin + rowIndex}
+            </div>
+          ))}
+        </div>
+        <div className="grid" style={{ gridTemplateColumns: `repeat(${width}, 1.75rem)` }}>
+          {grid.values.map((row, rowIndex) => row.map((value, columnIndex) => {
+            const absoluteRow = grid.rowOrigin + rowIndex;
+            const absoluteColumn = grid.columnOrigin + columnIndex;
+            const key = `${absoluteRow}:${absoluteColumn}`;
+            const isNonZero = value !== 0;
+            const editableValue = editableValues?.[rowIndex]?.[columnIndex];
+
+            return (
+              <div
+                className={`cell${isNonZero ? ' cell-nonzero' : ''}`}
+                key={key}
+              >
+                {editable ? (
+                  <input
+                    aria-label={`行${absoluteRow} 列${absoluteColumn}`}
+                    inputMode="decimal"
+                    onBeforeInput={(event) => preventInvalidInsertion(event, isNumberInput)}
+                    value={editableValue ?? String(value)}
+                    onChange={(event) => {
+                      const previousValue = editableValue ?? String(value);
+                      const accepted = onChange?.(rowIndex, columnIndex, event.target.value) ?? true;
+                      if (!accepted) restoreRejectedInput(event.currentTarget, previousValue);
+                    }}
+                  />
+                ) : (
+                  <span>{formatNumber(value)}</span>
+                )}
+              </div>
+            );
+          }))}
+        </div>
       </div>
     </div>
   );

@@ -36,7 +36,12 @@ button { border: 0; border-radius: .55rem; font-weight: 750; }
 .text-button:hover { color: #315238; }
 
 .grid-scroll { max-width: 100%; overflow: auto; padding-bottom: .25rem; }
-.grid { display: grid; width: max-content; gap: 1px; border: 1px solid #bdc7bc; background: #bdc7bc; }
+.grid-with-index { display: grid; grid-template-columns: 1.5rem max-content; grid-template-rows: 1.25rem max-content; width: max-content; }
+.grid-index-corner, .grid-index { color: #a0a79f; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: .65rem; font-variant-numeric: tabular-nums; }
+.column-indexes { grid-column: 2; grid-row: 1; display: grid; gap: 1px; margin-left: 1px; }
+.row-indexes { grid-column: 1; grid-row: 2; display: grid; gap: 1px; margin-top: 1px; }
+.grid-index { display: grid; place-items: center; }
+.grid { grid-column: 2; grid-row: 2; display: grid; width: max-content; gap: 1px; border: 1px solid #bdc7bc; background: #bdc7bc; }
 .cell { display: grid; width: 1.75rem; height: 1.75rem; place-items: center; background: #fffdfa; color: #39463d; font-size: .78rem; font-variant-numeric: tabular-nums; }
 .cell-nonzero { background: #dfeedd; color: #254c2d; }
 .cell input { width: 100%; height: 100%; border: 0; outline: 0; background: transparent; color: inherit; text-align: center; font-weight: 700; }
