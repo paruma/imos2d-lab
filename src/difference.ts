@@ -64,6 +64,13 @@ export type TextGridResult =
   | { values: string[][]; error: null }
   | { values: null; error: string };
 
+const normalizeTextValue = (value: string): string => {
+  const trimmed = value.trim();
+  if (trimmed === '') return '0';
+  const number = Number(trimmed);
+  return Number.isFinite(number) ? String(number) : value;
+};
+
 export const parseTextGrid = (text: string): TextGridResult => {
   const lines = text.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
   if (lines.length === 0) return { values: null, error: '配列を入力してください。' };
@@ -80,10 +87,16 @@ export const parseTextGrid = (text: string): TextGridResult => {
   if (values.length > 30 || columnCount > 30) {
     return { values: null, error: '行数・列数は30以下にしてください。' };
   }
-  return { values, error: null };
+  return { values: values.map((row) => row.map(normalizeTextValue)), error: null };
 };
 
-export const gridToText = (values: string[][]): string => values.map((row) => row.join(' ')).join('\n');
+const partialNumberPattern = /^[+-]?(?:(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d*)?)?$/;
+
+export const isNumberInput = (value: string): boolean =>
+  value === '.' || value === '+.' || value === '-.' || partialNumberPattern.test(value);
+
+export const gridToText = (values: string[][]): string =>
+  values.map((row) => row.map(normalizeTextValue).join(' ')).join('\n');
 
 export const createInputGrid = (rows: number, columns: number): string[][] =>
   Array.from({ length: rows }, () => Array.from({ length: columns }, () => ''));

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import {
   createChebyshevGrid,
   createConstantGrid,
@@ -9,6 +9,7 @@ import {
   difference,
   directions,
   gridToText,
+  isNumberInput,
   parseGrid,
   parseTextGrid,
   type Direction,
@@ -118,6 +119,39 @@ const parseUrlDirections = (value: string): Direction[] | null => {
     : null;
 };
 
+const preventInvalidInsertion = (
+  event: FormEvent<HTMLInputElement | HTMLTextAreaElement>,
+  isAllowed: (value: string) => boolean,
+) => {
+  const inputEvent = event.nativeEvent as InputEvent;
+  if (!inputEvent.inputType.startsWith('insert') || inputEvent.data === null) return;
+
+  const input = event.currentTarget;
+  const start = input.selectionStart ?? input.value.length;
+  const end = input.selectionEnd ?? start;
+  const nextValue = `${input.value.slice(0, start)}${inputEvent.data}${input.value.slice(end)}`;
+  if (!isAllowed(nextValue)) event.preventDefault();
+};
+
+const isTextGridInput = (value: string) => value.split(/\s+/).every(isNumberInput);
+
+const restoreRejectedInput = (
+  input: HTMLInputElement | HTMLTextAreaElement,
+  previousValue: string,
+) => {
+  const nextValue = input.value;
+  let unchangedPrefix = 0;
+  while (
+    unchangedPrefix < previousValue.length
+    && unchangedPrefix < nextValue.length
+    && previousValue[unchangedPrefix] === nextValue[unchangedPrefix]
+  ) {
+    unchangedPrefix += 1;
+  }
+  input.value = previousValue;
+  input.setSelectionRange(unchangedPrefix, unchangedPrefix);
+};
+
 const readUrlState = (): UrlState => {
   if (typeof window === 'undefined') return { inputGrid: null, sequence: [] };
 
@@ -156,10 +190,11 @@ const presetHref = (preset: Preset) => {
   return `?${params.toString()}`;
 };
 
-function GridView({ grid, editable, onChange }: {
+function GridView({ grid, editable, editableValues, onChange }: {
   grid: PositionedGrid;
   editable?: boolean;
-  onChange?: (row: number, column: number, value: string) => void;
+  editableValues?: string[][];
+  onChange?: (row: number, column: number, value: string) => boolean;
 }) {
   const width = grid.values[0]?.length ?? 0;
 
@@ -174,6 +209,7 @@ function GridView({ grid, editable, onChange }: {
           const absoluteColumn = grid.columnOrigin + columnIndex;
           const key = `${absoluteRow}:${absoluteColumn}`;
           const isNonZero = value !== 0;
+          const editableValue = editableValues?.[rowIndex]?.[columnIndex];
 
           return (
             <div
@@ -185,8 +221,13 @@ function GridView({ grid, editable, onChange }: {
                 <input
                   aria-label={`行${absoluteRow} 列${absoluteColumn}`}
                   inputMode="decimal"
-                  value={String(value)}
-                  onChange={(event) => onChange?.(rowIndex, columnIndex, event.target.value)}
+                  onBeforeInput={(event) => preventInvalidInsertion(event, isNumberInput)}
+                  value={editableValue ?? String(value)}
+                  onChange={(event) => {
+                    const previousValue = editableValue ?? String(value);
+                    const accepted = onChange?.(rowIndex, columnIndex, event.target.value) ?? true;
+                    if (!accepted) restoreRejectedInput(event.currentTarget, previousValue);
+                  }}
                 />
               ) : (
                 <span>{formatNumber(value)}</span>
@@ -263,15 +304,18 @@ export default function App() {
   };
 
   const updateCell = (row: number, column: number, value: string) => {
+    if (!isNumberInput(value)) return false;
+    const normalizedValue = value !== '' && Number.isFinite(Number(value)) ? String(Number(value)) : value;
     const nextGrid = inputGrid.map((currentRow, rowIndex) =>
       currentRow.map((currentValue, columnIndex) =>
-        rowIndex === row && columnIndex === column ? value : currentValue,
+        rowIndex === row && columnIndex === column ? normalizedValue : currentValue,
       ),
     );
     setInputGrid(nextGrid);
     setTextInput(gridToText(nextGrid));
     setTextError(null);
     setSequence([]);
+    return true;
   };
 
   const checkTextInput = (text: string) => {
@@ -343,9 +387,15 @@ export default function App() {
           <textarea
             aria-label="初期配列のテキスト入力"
             className={textError ? 'text-input has-error' : 'text-input'}
+            onBeforeInput={(event) => preventInvalidInsertion(event, isTextGridInput)}
             onChange={(event) => {
-              setTextInput(event.target.value);
-              checkTextInput(event.target.value);
+              const nextText = event.target.value;
+              if (!isTextGridInput(nextText)) {
+                restoreRejectedInput(event.currentTarget, textInput);
+                return;
+              }
+              setTextInput(nextText);
+              checkTextInput(nextText);
             }}
             onKeyDown={(event) => {
               if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
@@ -365,6 +415,7 @@ export default function App() {
         <GridView
           editable
           grid={stages[0]}
+          editableValues={inputGrid}
           onChange={updateCell}
         />
         <details className="preset-details">
