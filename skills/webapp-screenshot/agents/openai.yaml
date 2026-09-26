@@ -1,0 +1,7 @@
+interface:
+  display_name: "Web App Screenshot"
+  short_description: "Capture consistent app result screenshots"
+  default_prompt: "Use $webapp-screenshot to capture the actual web app difference history with one-row framing and tight margins."
+
+policy:
+  allow_implicit_invocation: true
