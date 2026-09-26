@@ -93,6 +93,11 @@ const presets: Preset[] = [
 const formatNumber = (value: number) =>
   Number.isInteger(value) ? String(value) : value.toLocaleString('en-US', { maximumFractionDigits: 4 });
 
+const cellFontSize = (text: string) => {
+  if (text.length <= 3) return undefined;
+  return `${Math.max(0.45, Math.min(0.85, 3.2 / text.length))}rem`;
+};
+
 type UrlState = {
   inputGrid: string[][] | null;
   sequence: Direction[];
@@ -229,11 +234,13 @@ function GridView({ grid, editable, editableValues, onChange }: {
             const key = `${absoluteRow}:${absoluteColumn}`;
             const isNonZero = value !== 0;
             const editableValue = editableValues?.[rowIndex]?.[columnIndex];
+            const displayValue = editableValue ?? formatNumber(value);
 
             return (
               <div
                 className={`cell${isNonZero ? ' cell-nonzero' : ''}`}
                 key={key}
+                style={{ fontSize: cellFontSize(displayValue) }}
               >
                 {editable ? (
                   <input
@@ -248,7 +255,7 @@ function GridView({ grid, editable, editableValues, onChange }: {
                     }}
                   />
                 ) : (
-                  <span>{formatNumber(value)}</span>
+                  <span>{displayValue}</span>
                 )}
               </div>
             );
